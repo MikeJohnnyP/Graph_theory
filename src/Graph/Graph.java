@@ -6,11 +6,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public abstract class Graph {
 
 	int[][] arr;
-	int[] visit;
+	boolean[] visit;
 	ArrayList<Integer> listView = new ArrayList<Integer>();
 
 	public Graph(int[][] arr) {
@@ -30,10 +32,10 @@ public abstract class Graph {
 	public abstract boolean removeEdge(int x, int y);
 
 	public void DFS(int i) {
-		visit[i] = 1;
+		visit[i] = true;
 		listView.add(i);
 		for (int j = 0; j < this.arr.length; j++) {
-			if(this.arr[i][j] > 0 && this.visit[j] != 1) {
+			if(this.arr[i][j] > 0 && this.visit[j] != true) {
 				DFS(j);
 			}
 		}
@@ -56,7 +58,7 @@ public abstract class Graph {
 				String k[] = line.split(" ");
 				if (k.length == 1) {
 					this.arr = new int[Integer.parseInt(k[0])][Integer.parseInt(k[0])];
-					this.visit = new int[Integer.parseInt(k[0])];
+					this.visit = new boolean[Integer.parseInt(k[0])];
 
 				} else {
 					for (int i = 0; i < k.length; i++) {
@@ -79,5 +81,96 @@ public abstract class Graph {
 			}
 			System.out.println();
 		}
+	}
+	public void BFS(int x) {
+		Queue<Integer> queue = new LinkedList<Integer>();
+		boolean isVisited[] = new boolean[arr.length];
+		queue.add(x);
+		isVisited[x] = true;
+		
+		while(!(queue.isEmpty())) {
+			int v = queue.poll();
+			for(int i = 0; i < arr.length; i++) {
+				if(arr[v][i] > 0) {
+					if(isVisited[i] != true ) {
+						queue.add(i);
+						isVisited[i] = true;
+						System.out.print(i + " ");
+					}
+				}
+			}
+			System.out.println();
+		}
+	}
+	
+	public boolean havePath(int x, int y) {
+		Queue<Integer> queue = new LinkedList<Integer>();
+		boolean isVisited[] = new boolean[arr.length];
+		queue.add(x);
+		isVisited[x] = true;
+		
+		while(!(queue.isEmpty())) {
+			int v = queue.poll();
+			for(int i = 0; i < arr.length; i++) {
+				if(arr[v][i] > 0) {
+					if(isVisited[i] != true) {
+						if(i == y)
+							return true;
+						else {
+							queue.add(i);
+							isVisited[i] = true;
+						}
+						
+					}
+				}
+			}
+			
+		}
+		return false;
+	
+	}
+	public void printPath(int x, int y) {
+		Queue<Integer> queue = new LinkedList<Integer>();
+		boolean isVisited[] = new boolean[arr.length];
+		ArrayList<Integer> path = new ArrayList<Integer>();
+		queue.add(x);
+		isVisited[x] = true;
+		
+		while(!(queue.isEmpty())) {
+			int v = queue.poll();
+			path.add(v);
+			for(int i = 0; i < arr.length; i++) {
+				if(arr[v][i] > 0) {
+					if(isVisited[i] != true) {
+						if(i == y) {
+							path.add(i);
+							for(int h : path) {
+								System.out.print(h + " ");
+							}
+							return;
+						}
+							else {
+							queue.add(i);
+							isVisited[i] = true;
+						}
+						
+					}
+				}
+			}
+			
+		}
+	}
+	
+	public boolean checkSingleGraph() {
+		for(int i = 0; i < arr.length ; i++) {
+			for (int y = 0; y < arr.length; y++) {
+				if(i == y && arr[i][y] != 0)
+					return false;
+				if(arr[i][y] > 1)
+					return false;
+			}
+			
+		}
+		return true;
 	}
 }
